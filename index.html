@@ -3,15 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3軸Z軸の切り替え操作盤 (ジンバル/ループ)</title>
+    
+    <!-- ファビコン (SVG絵文字を使用) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌕</text></svg>">
+    
+    <!-- タイトル設定 -->
+    <title>3軸を１つのデフォーマで表現する場合 | あまくらグラフィック</title>
+    
+    <!-- SEO用のメタタグ (詳細な説明) -->
+    <meta name="description" content="天倉りぃの公式ウェブサイトです。Live2Dモデリング等で役立つ、3軸（X, Y, Z）回転を1つのデフォーマで表現する際の挙動確認ツール。ジンバルロックを考慮したシームレスなループ制御や、各軸の組み合わせによる見え方をブラウザ上でプレビューできます。">
+    <meta name="keywords" content="天倉りぃ, イラストレーター, Live2D, Vtuber, アマクラ, あまくら, Rili, Amakura Rili, 3軸回転, デフォーマ">
+    
+    <!-- OGP (Open Graph Protocol) 設定 -->
+    <meta property="og:title" content="3軸を１つのデフォーマで表現する場合 | あまくらグラフィック">
+    <!-- OGP用の説明は短くキャッチーに -->
+    <meta property="og:description" content="Live2Dモデリング等で役立つ、3軸回転のシームレスループ制御プレビューツール。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="あまくらグラフィック">
+    <!-- ※必要に応じて og:url や og:image も設定してください -->
+    <!-- <meta property="og:url" content="https://your-site-url.com"> -->
+    <!-- <meta property="og:image" content="https://your-site-url.com/thumbnail.png"> -->
+
+    <!-- Twitter Card 設定 -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@amakura_rili">
+    <meta name="twitter:creator" content="@amakura_rili">
+
     <style>
         /* グローバル設定とレイアウト */
         body {
             font-family: 'Inter', Arial, sans-serif;
             display: flex;
-            flex-direction: column; /* 変更: 縦並びにする */
-            justify-content: flex-start; /* 変更: 上詰め */
-            align-items: center; /* 変更: 中央揃え */
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
             min-height: 100vh;
             padding: 20px;
             background-color: #f8f9fa;
@@ -22,19 +47,82 @@
             display: grid;
             grid-template-columns: 1fr 400px; /* コントロールエリアと情報エリア */
             max-width: 1200px;
-            width: 100%; /* 95%から変更 */
+            width: 100%;
             gap: 30px;
             background-color: white;
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
+            position: relative; /* 言語スイッチの配置用 */
+        }
+
+        /* 言語切り替えスイッチのスタイル */
+        .lang-switch-container {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #007bff;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
         }
 
         /* レスポンシブ対応 */
         @media (max-width: 800px) {
             .container {
                 grid-template-columns: 1fr;
+                padding-top: 60px; /* スイッチ用のスペース確保 */
+            }
+            .lang-switch-container {
+                top: 15px;
+                right: 15px;
             }
             .controls-grid {
                 grid-template-columns: 50px repeat(5, 1fr);
@@ -146,48 +234,95 @@
             overflow: hidden;
         }
 
-        /* 形状表示用の特別なCSS (カード表現) */
+        /* 形状表示用の特別なCSS (カード表現 - 厚み付き) */
         .card-shape {
             width: 140px;
             height: 200px;
-            border-radius: 12px;
             background-color: transparent; 
             
             /* ジンバル風の動的な回転 */
-            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); /* イージングを少しリッチに */
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
             transform-style: preserve-3d; /* 3D回転のために必要 */
             position: relative;
             transform: rotateX(0deg) rotateY(0deg); 
         }
 
-        /* カードの共通スタイル */
+        /* カードの面の共通スタイル */
         .card-face {
             position: absolute;
-            width: 100%;
-            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: 12px;
-            backface-visibility: hidden; /* 裏面が透けないように */
-            border: 4px solid #343a40;
             box-sizing: border-box;
-            font-size: 2em;
             font-weight: bold;
             color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 1px solid rgba(0,0,0,0.2); /* 輪郭を見やすく */
         }
 
+        /* --- 各面の定義 (Width: 140px, Height: 200px, Depth: 20px) --- */
+        
+        /* 表面 */
         .card-face.front {
-            content: '表';
+            width: 140px;
+            height: 200px;
             background-color: #4CAF50; /* 緑色 */
-            transform: rotateY(0deg);
+            transform: translateZ(10px); /* 厚みの半分(10px)だけ前に */
+            font-size: 2em;
         }
 
+        /* 裏面 */
         .card-face.back {
-            content: '裏';
+            width: 140px;
+            height: 200px;
             background-color: #FF5722; /* 赤色 */
-            transform: rotateY(180deg);
+            transform: rotateY(180deg) translateZ(10px); /* 180度回して、厚みの半分だけ前に(結果的に後ろへ) */
+            font-size: 2em;
+        }
+
+        /* 右側面 */
+        .card-face.right {
+            width: 20px; /* 厚み */
+            height: 200px;
+            background-color: #9E9E9E; /* グレー */
+            left: 60px; /* (140 - 20) / 2 = 60px : 中央配置のためのオフセット */
+            transform: rotateY(90deg) translateZ(70px); /* 横に90度回して、幅の半分(70px)だけ外へ */
+            font-size: 12px;
+            writing-mode: vertical-rl; /* 縦書き */
+            text-orientation: upright;
+        }
+
+        /* 左側面 */
+        .card-face.left {
+            width: 20px; /* 厚み */
+            height: 200px;
+            background-color: #9E9E9E; /* グレー */
+            left: 60px;
+            transform: rotateY(-90deg) translateZ(70px);
+            font-size: 12px;
+            writing-mode: vertical-rl; /* 縦書き */
+            text-orientation: upright;
+        }
+
+        /* 上面 */
+        .card-face.top {
+            width: 140px;
+            height: 20px; /* 厚み */
+            background-color: #757575; /* 少し濃いグレー */
+            top: 90px; /* (200 - 20) / 2 = 90px */
+            transform: rotateX(90deg) translateZ(100px); /* 縦に90度回して、高さの半分(100px)だけ上へ */
+            font-size: 12px;
+            line-height: 20px;
+        }
+
+        /* 下面 */
+        .card-face.bottom {
+            width: 140px;
+            height: 20px; /* 厚み */
+            background-color: #757575; /* 少し濃いグレー */
+            top: 90px;
+            transform: rotateX(-90deg) translateZ(100px);
+            font-size: 12px;
+            line-height: 20px;
         }
 
         /* --- フッターのスタイル --- */
@@ -290,15 +425,25 @@
 <body>
 
     <div class="container">
+        <!-- 言語切り替えスイッチ -->
+        <div class="lang-switch-container">
+            <span id="label-jp">JP</span>
+            <label class="switch">
+                <input type="checkbox" id="lang-toggle">
+                <span class="slider"></span>
+            </label>
+            <span id="label-en">EN</span>
+        </div>
+
         <div class="controls-grid-container">
-            <h2>3軸Z軸の切り替え操作盤</h2>
-            <p style="font-size:0.9em; color:#6c757d;">X軸(Yaw/横回転)、Y軸(Pitch/縦回転)、Z軸(Yawオフセット)のシームレスループ制御。</p>
+            <h2 data-i18n="title">3軸を１つのデフォーマで表現する場合</h2>
+            <p data-i18n="desc" style="font-size:0.9em; color:#6c757d;">X軸、Y軸、Z軸のシームレスループ制御。</p>
 
             <!-- X軸、Y軸、Z軸のボタン/表示グリッド -->
             <div class="controls-grid">
                 
                 <!-- ヘッダーラベル -->
-                <div class="label">軸</div>
+                <div class="label" data-i18n="label_axis">軸</div>
                 <div class="label">-180</div>
                 <div class="label">-90</div>
                 <div class="label">0</div>
@@ -339,18 +484,22 @@
 
         <!-- Zの動きと形状の表示エリア -->
         <div class="info-area">
-            <h3>Zの動き（ルックアップ結果）</h3>
+            <h3 data-i18n="h_z_move">プレビューの動きの名前</h3>
             <div id="z-output" class="output-box">（初期化中...）</div>
             
-            <h3>カードの詳細</h3>
+            <h3 data-i18n="h_details">カードの詳細</h3>
             <div id="shape-output" class="output-box">（初期化中...）</div>
             
-            <h3>ジンバルプレビュー</h3>
+            <h3 data-i18n="h_preview">プレビュー</h3>
             <div id="preview-box" class="preview-box">
                 <div id="shape-visual" class="card-shape">
-                    <!-- 疑似要素の代わりに明示的な要素を使用（z-index管理がしやすいため） -->
-                    <div class="card-face front">表</div>
-                    <div class="card-face back">裏</div>
+                    <!-- 直方体にするための6面を定義 -->
+                    <div class="card-face front" data-face="front">表</div>
+                    <div class="card-face back" data-face="back">裏</div>
+                    <div class="card-face right" data-face="right">右</div>
+                    <div class="card-face left" data-face="left">左</div>
+                    <div class="card-face top" data-face="top">上</div>
+                    <div class="card-face bottom" data-face="bottom">下</div>
                 </div>
             </div>
         </div>
@@ -360,9 +509,9 @@
     <footer>
         <div class="footer-content">
             <div class="footer-section" style="flex: 0 0 300px; border-right: 1px solid #eee; padding-right: 30px;">
-                <h4>プロフィール</h4>
+                <h4 data-i18n="footer_profile">プロフィール</h4>
                 <div class="profile-info">
-                    <div class="profile-name">天倉りぃ</div>
+                    <div class="profile-name" data-i18n="profile_name">天倉りぃ</div>
                     <div class="profile-links">
                         <a href="https://x.com/amakura_rili" target="_blank" rel="noopener noreferrer">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -381,7 +530,7 @@
             </div>
 
             <div class="footer-section">
-                <h4>BOOTHで販売中</h4>
+                <h4 data-i18n="footer_ads">BOOTHで販売中</h4>
                 <ul class="ad-list">
                     <li>
                         <a href="https://amakura-graphic.booth.pm/items/7228457" target="_blank" rel="noopener noreferrer">
@@ -414,22 +563,92 @@
             const zOutput = document.getElementById('z-output');
             const shapeOutput = document.getElementById('shape-output');
             const shapeVisual = document.getElementById('shape-visual');
+            const langToggle = document.getElementById('lang-toggle');
+            
+            // テキスト要素の取得
+            const i18nElements = document.querySelectorAll('[data-i18n]');
+            const cardFaces = document.querySelectorAll('.card-face');
 
             let selectedX = "0"; 
             let selectedY = "0"; 
             let selectedZ = "0"; 
             
-            // 回転アニメーション用の現在角度を保持する変数 (360度ループのために必要)
+            // 回転アニメーション用の現在角度
             let currentRotX = 0; 
             let currentRotY = 0; 
             let currentRotZ = 0; 
 
-            // Zの状態に対応する表示内容のマップ
+            // 言語設定 (デフォルト: jp)
+            let currentLang = 'ja';
+
+            // --- 翻訳データ ---
+            const TRANSLATIONS = {
+                ja: {
+                    title: "3軸を１つのデフォーマで表現する場合",
+                    desc: "X軸、Y軸、Z軸のシームレスループ制御。",
+                    label_axis: "軸",
+                    h_z_move: "プレビューの動きの名前",
+                    h_details: "カードの詳細",
+                    h_preview: "プレビュー",
+                    footer_profile: "プロフィール",
+                    footer_ads: "BOOTHで販売中",
+                    profile_name: "天倉りぃ",
+                    // Faces
+                    face_front: "表",
+                    face_back: "裏",
+                    face_right: "右",
+                    face_left: "左",
+                    face_top: "上",
+                    face_bottom: "下",
+                    // Dynamic JS Texts
+                    msg_data_undefined: "データ未定義",
+                    msg_key_missing: "対応するデータがありません。Key: ",
+                    msg_z_determined: "(Z={{z}}が決定)",
+                    msg_z_independent: "(Z不問)"
+                },
+                en: {
+                    title: "Representing 3 Axes with 1 Deformer",
+                    desc: "Seamless loop control of X, Y, and Z axes.",
+                    label_axis: "Axis",
+                    h_z_move: "Preview Movement Name",
+                    h_details: "Card Details",
+                    h_preview: "Preview",
+                    footer_profile: "Profile",
+                    footer_ads: "Available on BOOTH",
+                    profile_name: "Amakura Rili",
+                    // Faces
+                    face_front: "Front",
+                    face_back: "Back",
+                    face_right: "Right",
+                    face_left: "Left",
+                    face_top: "Top",
+                    face_bottom: "Bottom",
+                    // Dynamic JS Texts
+                    msg_data_undefined: "Data undefined",
+                    msg_key_missing: "No data found for Key: ",
+                    msg_z_determined: "(Determined by Z={{z}})",
+                    msg_z_independent: "(Independent of Z)"
+                }
+            };
+
+            // Zの状態に対応する表示内容のマップ (多言語対応)
             const Z_MAP = {
-                "+": { z_content: "表 / Front", shape_content: "カードが正面を向いています。" },
-                "0X": { z_content: "中 / None", shape_content: "カードが真横を向いています。(側面、X軸の影響が大きい)" },
-                "0Y": { z_content: "中 / None", shape_content: "カードが真横を向いています。(側面、Y軸の影響が大きい)" },
-                "-": { z_content: "裏 / Back", shape_content: "カードが裏面を向いています。" }
+                "+": { 
+                    ja: { z_content: "表 / Front", shape_content: "カードが正面を向いています。" },
+                    en: { z_content: "Front", shape_content: "The card is facing front." }
+                },
+                "0X": { 
+                    ja: { z_content: "側面 / Side", shape_content: "カードが真横を向いています。(側面、X軸の影響が大きい)" },
+                    en: { z_content: "Side", shape_content: "The card is facing sideways. (Side, X-axis dominant)" }
+                },
+                "0Y": { 
+                    ja: { z_content: "側面 / Side", shape_content: "カードが真横を向いています。(側面、Y軸の影響が大きい)" },
+                    en: { z_content: "Side", shape_content: "The card is facing sideways. (Side, Y-axis dominant)" }
+                },
+                "-": { 
+                    ja: { z_content: "裏 / Back", shape_content: "カードが裏面を向いています。" },
+                    en: { z_content: "Back", shape_content: "The card is facing the back." }
+                }
             };
 
             const Z_VALS = ["-180", "-90", "0", "90", "180"];
@@ -437,6 +656,7 @@
             let contentMap = {};
 
             // --- 1. ルックアップテーブルの定義 ---
+            // Z_MAPの構造が変わったが、参照キーは変わらない
             
             // X=0, Y=0
             contentMap["0,0,0"] = Z_MAP["+"]; 
@@ -447,7 +667,7 @@
 
             // X=90, Y=0
             contentMap["90,0,0"] = Z_MAP["0X"];
-            contentMap["90,0,90"] = Z_MAP["-"]; // ユーザー指定ケース
+            contentMap["90,0,90"] = Z_MAP["-"]; 
             contentMap["90,0,180"] = Z_MAP["-"];
             contentMap["90,0,-90"] = Z_MAP["0X"];
             contentMap["90,0,-180"] = Z_MAP["+"];
@@ -459,91 +679,103 @@
             contentMap["0,90,-90"] = Z_MAP["-"];
             contentMap["0,90,-180"] = Z_MAP["+"];
 
-
-            // その他の組み合わせの定義 (All other 24 combinations)
+            // その他の組み合わせ
             const originalData = {
                 "-180,180": "+", "-90,180": "0Y", "0,180": "-", "90,180": "0Y", "180,180": "+",
                 "-180,90": "+", "-90,90": "0X", "90,90": "-", "180,90": "-", 
-                "-180,0": "+", "-90,0": "-", "180,0": "+", 
+                "-180,0": "+", "-90,0": "0X", "180,0": "+",  // 修正箇所: "-90,0"を "0X" (側面) に変更
                 "-180,-90": "-", "-90,-90": "0X", "0,-90": "+", "90,-90": "0X", "180,-90": "-",
                 "-180,-180": "-", "-90,-180": "+", "0,-180": "+", "90,-180": "-", "180,-180": "+"
             };
 
             for (const key in originalData) {
                 const [x, y] = key.split(',');
-                
-                // 手動定義済みのケースはスキップ
-                if (
-                    (x === "0" && y === "0") || 
-                    (x === "90" && y === "0") || 
-                    (x === "0" && y === "90")
-                ) continue;
-
+                if ((x === "0" && y === "0") || (x === "90" && y === "0") || (x === "0" && y === "90")) continue;
                 const symbol = originalData[key];
-                const fixedState = Z_MAP[symbol];
-
                 for (const z of Z_VALS) {
-                    contentMap[`${x},${y},${z}`] = fixedState;
+                    contentMap[`${x},${y},${z}`] = Z_MAP[symbol];
                 }
             }
 
+            // 言語切り替え機能
+            function updateLanguage() {
+                const t = TRANSLATIONS[currentLang];
+
+                // data-i18n属性を持つ要素のテキスト更新
+                i18nElements.forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (t[key]) el.textContent = t[key];
+                });
+
+                // カードの面のテキスト更新
+                cardFaces.forEach(el => {
+                    const face = el.getAttribute('data-face');
+                    if (face && t[`face_${face}`]) {
+                        el.textContent = t[`face_${face}`];
+                    }
+                });
+
+                // 現在の表示も更新（動的テキストのリフレッシュ）
+                updateDisplay();
+            }
 
             // Zと形状の表示を更新する関数
             function updateDisplay() {
                 const key = `${selectedX},${selectedY},${selectedZ}`;
-                const content = contentMap[key];
+                const contentObj = contentMap[key];
+                const t = TRANSLATIONS[currentLang]; // 現在の言語リソース
 
-                // 1. ジンバル風の動的回転の計算
-                const newX = parseInt(selectedX); // UI上のXボタン (横回転ターゲット)
-                const newY = parseInt(selectedY); // UI上のYボタン (縦回転ターゲット)
-                const newZ = parseInt(selectedZ); // UI上のZボタン (オフセットターゲット)
+                // 回転計算
+                const newX = parseInt(selectedX); 
+                const newY = parseInt(selectedY); 
+                const newZ = parseInt(selectedZ); 
 
-                // --- 軸ごとのシームレスループ処理 ---
-
-                // CSSの rotateY (横回転) は、UIの Xボタン で制御
                 const targetRotY = newX;
                 const offsetY = Math.round((currentRotY - targetRotY) / 360) * 360;
                 currentRotY = targetRotY + offsetY;
                 
-                // CSSの rotateX (縦回転) は、UIの Yボタン で制御
                 const targetRotX = newY;
                 const offsetX = Math.round((currentRotX - targetRotX) / 360) * 360;
                 currentRotX = targetRotX + offsetX;
                 
-                // Zオフセット (横回転に加算)
                 const targetRotZ = newZ;
                 const offsetZ = Math.round((currentRotZ - targetRotZ) / 360) * 360;
                 currentRotZ = targetRotZ + offsetZ;
 
-                // 2. 最終的な回転角度の決定
                 const finalRotY = currentRotY + currentRotZ; 
                 
-                // 3. Transform適用
                 shapeVisual.style.transform = `rotateX(${currentRotX}deg) rotateY(${finalRotY}deg)`;
 
-                // 4. 表示更新
-                if (!content) {
-                     zOutput.textContent = "データ未定義";
-                     shapeOutput.textContent = `Key: ${key} に対応するデータがありません。`;
+                if (!contentObj) {
+                     zOutput.textContent = t.msg_data_undefined;
+                     shapeOutput.textContent = t.msg_key_missing + key;
                      return;
                 }
+
+                // 言語に応じたコンテンツを取得
+                const content = contentObj[currentLang];
 
                 zOutput.textContent = content.z_content;
                 
                 let detailText = content.shape_content;
                 
-                // 状態依存の補足テキスト
                 if ((selectedX === "0" && selectedY === "0") || 
                     (selectedX === "90" && selectedY === "0") || 
                     (selectedX === "0" && selectedY === "90")) {
-                      detailText += ` (Z=${selectedZ}が決定)`;
+                      detailText += " " + t.msg_z_determined.replace('{{z}}', selectedZ);
                 } else {
-                      detailText += ` (Z不問)`;
+                      detailText += " " + t.msg_z_independent;
                 }
 
                 detailText += ` [CSS Rotate: X(Tilt)=${currentRotX}°, Y(Pan)=${finalRotY}°]`;
                 shapeOutput.textContent = detailText;
             }
+
+            // スイッチのイベントリスナー
+            langToggle.addEventListener('change', (e) => {
+                currentLang = e.target.checked ? 'en' : 'ja';
+                updateLanguage();
+            });
 
             function setupButtonListeners(buttons, axis) {
                 buttons.forEach(button => {
@@ -565,7 +797,7 @@
             setupButtonListeners(yButtons, 'y');
             setupButtonListeners(zButtons, 'z');
             
-            // 初期化発火
+            // 初期化
             document.querySelector('.z-btn[data-value="0"]').click();
             document.querySelector('.y-btn[data-value="0"]').click();
             document.querySelector('.x-btn[data-value="0"]').click();
