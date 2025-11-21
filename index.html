@@ -307,21 +307,21 @@
 
         /* ライセンス通知エリアのスタイル */
         #license-notice {
-            display: block; /* グリッドではなくブロック要素として表示 */
+            display: block; /* ★修正: これによりcontainerのgrid指定を上書きして縦並び（ブロック）にします */
             width: 100%;
-            max-width: 1200px;
-            margin: 15px auto 20px; /* 中央揃え */
+            max-width: 1200px; /* 修正: 最大幅を指定 */
+            margin-top: 15px;
             padding: 15px;
             background-color: #f0f0f0; /* 薄いグレー */
             border: 1px solid #ccc; /* 枠線もグレーに */
             border-radius: 8px;
             font-size: 0.85em;
             color: #495057;
-            line-height: 1.2; 
-            box-sizing: border-box;
+            line-height: 1.2; /* 行間を狭く */
+            margin-bottom: 20px; /* ページ下部との間隔 */
         }
         #license-notice p {
-            margin: 4px 0; /* 適度な行間 */
+            margin: 2px 0; /* 段落間のマージンを狭く */
         }
         #license-notice strong {
             color: #343a40;
@@ -329,15 +329,15 @@
 
         /* --- 関連プロジェクトエリアのスタイル --- */
         #related-projects {
-            display: block; /* グリッドではなくブロック要素として表示 */
+            display: block; /* ★修正: containerのgridを上書き */
             width: 100%;
-            max-width: 1200px;
-            margin: 30px auto 0; /* 中央揃え */
+            max-width: 1200px; /* 修正: 最大幅を指定 */
+            margin-top: 30px;
             padding: 25px;
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
+            box-sizing: border-box; /* パディングを含めて幅を計算 */
         }
 
         #related-projects h4 {
@@ -528,7 +528,7 @@
     </div>
     
     <!-- 関連プロジェクトエリア (3つ横並び) -->
-    <section id="related-projects">
+    <section id="related-projects" class="container">
         <h4 data-i18n="footer_ads_title">関連プロジェクト</h4>
         
         <div class="project-grid">
@@ -585,19 +585,11 @@
     </footer>
     
     <!-- 利用制限に関する通知エリアの移動 (ページ最下部に表示) -->
-    <div id="license-notice">
-        <p>
-            ※このWEBページは、Geminiの協力を得て制作されています。
-        </p>
-        <p>
-            ※このプロジェクトは<strong data-i18n="non_commercial_license">非営利・学習利用ライセンス</strong>のもとで公開されています。
-        </p>
-        <p>
-            ※**商用利用、再配布、公開は固く禁止します。**
-        </p>
-        <p>
-            ※個人的な学習、研究、および非営利目的でのみご利用いただけます。
-        </p>
+    <div id="license-notice" class="container">
+        <p data-i18n="notice_ai">※このWEBページは、Geminiの協力を得て制作されています。</p>
+        <p data-i18n="notice_license">※このプロジェクトは<strong>非営利・学習利用ライセンス</strong>のもとで公開されています。</p>
+        <p data-i18n="notice_prohibition">※<strong>商用利用、再配布、公開は固く禁止します。</strong></p>
+        <p data-i18n="notice_usage">※個人的な学習、研究、および非営利目的でのみご利用いただけます。</p>
     </div>
     
     <!-- X埋め込みウィジェットスクリプト -->
@@ -629,7 +621,11 @@
                     footer_ads_title: "関連プロジェクト", 
                     footer_ads: "BOOTHで販売中",
                     profile_name: "天倉りぃ",
-                    non_commercial_license: "非営利・学習利用ライセンス", 
+                    // License Notices
+                    notice_ai: "※このWEBページは、Geminiの協力を得て制作されています。",
+                    notice_license: "※このプロジェクトは<strong>非営利・学習利用ライセンス</strong>のもとで公開されています。",
+                    notice_prohibition: "※<strong>商用利用、再配布、公開は固く禁止します。</strong>",
+                    notice_usage: "※個人的な学習、研究、および非営利目的でのみご利用いただけます。",
                     // Faces
                     face_front: "表", face_back: "裏", face_right: "右", face_left: "左", face_top: "上", face_bottom: "下",
                     // Dynamic Labels
@@ -654,7 +650,11 @@
                     footer_ads_title: "Related Projects", 
                     footer_ads: "Available on BOOTH",
                     profile_name: "Amakura Rili",
-                    non_commercial_license: "Non-Commercial Use and Learning License", 
+                    // License Notices
+                    notice_ai: "* This webpage was created with the assistance of Gemini.",
+                    notice_license: "* This project is released under a <strong>Non-Commercial Use and Learning License</strong>.",
+                    notice_prohibition: "* <strong>Commercial use, redistribution, and publication are strictly prohibited.</strong>",
+                    notice_usage: "* Available only for personal learning, research, and non-commercial purposes.",
                     // Faces
                     face_front: "Front", face_back: "Back", face_right: "Right", face_left: "Left", face_top: "Top", face_bottom: "Bottom",
                     // Dynamic Labels
@@ -767,7 +767,7 @@
                 const t = TRANSLATIONS[currentLang];
                 i18nElements.forEach(el => {
                     const key = el.getAttribute('data-i18n');
-                    if (t[key]) el.textContent = t[key];
+                    if (t[key]) el.innerHTML = t[key];
                 });
                 cardFaces.forEach(el => {
                     const face = el.getAttribute('data-face');
