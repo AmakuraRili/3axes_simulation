@@ -10,20 +10,16 @@
     <!-- タイトル設定 -->
     <title>3軸を１つのデフォーマで表現する場合 | あまくらグラフィック</title>
     
-    <!-- SEO用のメタタグ (詳細な説明) -->
+    <!-- SEO用のメタタグ -->
     <meta name="description" content="天倉りぃの公式ウェブサイトです。Live2Dモデリング等で役立つ、3軸（X, Y, Z）回転を1つのデフォーマで表現する際の挙動確認ツール。ジンバルロックを考慮したシームレスなループ制御や、各軸の組み合わせによる見え方をブラウザ上でプレビューできます。">
     <meta name="keywords" content="天倉りぃ, イラストレーター, Live2D, Vtuber, アマクラ, あまくら, Rili, Amakura Rili, 3軸回転, デフォーマ">
     
-    <!-- OGP (Open Graph Protocol) 設定 -->
+    <!-- OGP 設定 -->
     <meta property="og:title" content="3軸を１つのデフォーマで表現する場合 | あまくらグラフィック">
-    <!-- OGP用の説明は短くキャッチーに -->
     <meta property="og:description" content="Live2Dモデリング等で役立つ、3軸回転のシームレスループ制御プレビューツール。">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="あまくらグラフィック">
-    <!-- ※必要に応じて og:url や og:image も設定してください -->
-    <!-- <meta property="og:url" content="https://your-site-url.com"> -->
-    <!-- <meta property="og:image" content="https://your-site-url.com/thumbnail.png"> -->
-
+    
     <!-- Twitter Card 設定 -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@amakura_rili">
@@ -131,7 +127,6 @@
                 padding-top: 20px;
                 border-top: 1px solid #eee;
             }
-            /* フッターのレスポンシブ */
             .footer-content {
                 flex-direction: column;
                 gap: 30px;
@@ -234,7 +229,7 @@
             overflow: hidden;
         }
 
-        /* 形状表示用の特別なCSS (カード表現 - 厚み付き) */
+        /* 形状表示用の特別なCSS (カード表現) */
         .card-shape {
             width: 140px;
             height: 200px;
@@ -256,73 +251,51 @@
             box-sizing: border-box;
             font-weight: bold;
             color: white;
-            border: 1px solid rgba(0,0,0,0.2); /* 輪郭を見やすく */
+            border: 1px solid rgba(0,0,0,0.2);
         }
 
         /* --- 各面の定義 (Width: 140px, Height: 200px, Depth: 20px) --- */
+        /* 厚み20pxのカードとして構成 */
         
-        /* 表面 */
         .card-face.front {
-            width: 140px;
-            height: 200px;
+            width: 140px; height: 200px;
             background-color: #4CAF50; /* 緑色 */
-            transform: translateZ(10px); /* 厚みの半分(10px)だけ前に */
+            transform: translateZ(10px);
             font-size: 2em;
         }
-
-        /* 裏面 */
         .card-face.back {
-            width: 140px;
-            height: 200px;
+            width: 140px; height: 200px;
             background-color: #FF5722; /* 赤色 */
-            transform: rotateY(180deg) translateZ(10px); /* 180度回して、厚みの半分だけ前に(結果的に後ろへ) */
+            transform: rotateY(180deg) translateZ(10px);
             font-size: 2em;
         }
-
-        /* 右側面 */
         .card-face.right {
-            width: 20px; /* 厚み */
-            height: 200px;
+            width: 20px; height: 200px;
             background-color: #9E9E9E; /* グレー */
-            left: 60px; /* (140 - 20) / 2 = 60px : 中央配置のためのオフセット */
-            transform: rotateY(90deg) translateZ(70px); /* 横に90度回して、幅の半分(70px)だけ外へ */
-            font-size: 12px;
-            writing-mode: vertical-rl; /* 縦書き */
-            text-orientation: upright;
+            left: 60px;
+            transform: rotateY(90deg) translateZ(70px);
+            font-size: 12px; writing-mode: vertical-rl; text-orientation: upright;
         }
-
-        /* 左側面 */
         .card-face.left {
-            width: 20px; /* 厚み */
-            height: 200px;
+            width: 20px; height: 200px;
             background-color: #9E9E9E; /* グレー */
             left: 60px;
             transform: rotateY(-90deg) translateZ(70px);
-            font-size: 12px;
-            writing-mode: vertical-rl; /* 縦書き */
-            text-orientation: upright;
+            font-size: 12px; writing-mode: vertical-rl; text-orientation: upright;
         }
-
-        /* 上面 */
         .card-face.top {
-            width: 140px;
-            height: 20px; /* 厚み */
-            background-color: #757575; /* 少し濃いグレー */
-            top: 90px; /* (200 - 20) / 2 = 90px */
-            transform: rotateX(90deg) translateZ(100px); /* 縦に90度回して、高さの半分(100px)だけ上へ */
-            font-size: 12px;
-            line-height: 20px;
+            width: 140px; height: 20px;
+            background-color: #757575; /* 濃いグレー */
+            top: 90px;
+            transform: rotateX(90deg) translateZ(100px);
+            font-size: 12px; line-height: 20px;
         }
-
-        /* 下面 */
         .card-face.bottom {
-            width: 140px;
-            height: 20px; /* 厚み */
-            background-color: #757575; /* 少し濃いグレー */
+            width: 140px; height: 20px;
+            background-color: #757575; /* 濃いグレー */
             top: 90px;
             transform: rotateX(-90deg) translateZ(100px);
-            font-size: 12px;
-            line-height: 20px;
+            font-size: 12px; line-height: 20px;
         }
 
         /* --- フッターのスタイル --- */
@@ -331,9 +304,9 @@
             max-width: 1200px;
             margin-top: 30px;
             padding: 30px;
-            background-color: white; /* メインエリアと同じ白背景 */
+            background-color: white;
             border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* 少し控えめなシャドウ */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
             color: #495057;
         }
@@ -349,83 +322,43 @@
         }
 
         .footer-section h4 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            color: #343a40;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 8px;
+            margin-top: 0; margin-bottom: 15px;
+            font-size: 1.1em; color: #343a40;
+            border-bottom: 2px solid #e9ecef; padding-bottom: 8px;
             display: inline-block;
         }
 
         .profile-info {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            display: flex; flex-direction: column; gap: 10px;
         }
 
         .profile-name {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #212529;
+            font-size: 1.2em; font-weight: bold; color: #212529;
         }
 
         .profile-links a {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #007bff;
-            text-decoration: none;
-            margin-bottom: 8px;
-            transition: color 0.2s;
+            display: flex; align-items: center; gap: 8px;
+            color: #007bff; text-decoration: none;
+            margin-bottom: 8px; transition: color 0.2s;
         }
+        .profile-links a:hover { color: #0056b3; text-decoration: underline; }
 
-        .profile-links a:hover {
-            color: #0056b3;
-            text-decoration: underline;
-        }
-
-        .ad-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .ad-list li {
-            margin-bottom: 12px;
-        }
-
+        .ad-list { list-style: none; padding: 0; margin: 0; }
+        .ad-list li { margin-bottom: 12px; }
         .ad-list a {
-            color: #495057;
-            text-decoration: none;
-            display: block;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-            padding-left: 8px;
+            color: #495057; text-decoration: none; display: block;
+            transition: all 0.2s; border-left: 3px solid transparent; padding-left: 8px;
         }
-
         .ad-list a:hover {
-            color: #007bff;
-            border-left: 3px solid #007bff;
-            background-color: #f8f9fa;
+            color: #007bff; border-left: 3px solid #007bff; background-color: #f8f9fa;
         }
-
-        .ad-title {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .ad-url {
-            font-size: 0.85em;
-            color: #adb5bd;
-        }
+        .ad-title { font-weight: bold; display: block; margin-bottom: 2px; }
+        .ad-url { font-size: 0.85em; color: #adb5bd; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- 言語切り替えスイッチ -->
         <div class="lang-switch-container">
             <span id="label-jp">JP</span>
             <label class="switch">
@@ -437,20 +370,15 @@
 
         <div class="controls-grid-container">
             <h2 data-i18n="title">3軸を１つのデフォーマで表現する場合</h2>
-            <p data-i18n="desc" style="font-size:0.9em; color:#6c757d;">X軸、Y軸、Z軸のシームレスループ制御。</p>
+            <p data-i18n="desc" style="font-size:0.9em; color:#6c757d; margin-bottom: 8px;">X軸、Y軸、Z軸のシームレスループ制御。</p>
+            <p data-i18n="desc_hierarchy" style="font-size:0.85em; color:#495057; margin-top: 0; margin-bottom: 20px; background-color: #e9ecef; padding: 8px; border-radius: 4px;">
+                回転の優先順位（階層）: 親 [X:Yaw] &gt; 子 [Y:Pitch] &gt; 孫 [Z:Yaw Offset]
+            </p>
 
-            <!-- X軸、Y軸、Z軸のボタン/表示グリッド -->
             <div class="controls-grid">
-                
-                <!-- ヘッダーラベル -->
                 <div class="label" data-i18n="label_axis">軸</div>
-                <div class="label">-180</div>
-                <div class="label">-90</div>
-                <div class="label">0</div>
-                <div class="label">90</div>
-                <div class="label">180</div>
+                <div class="label">-180</div><div class="label">-90</div><div class="label">0</div><div class="label">90</div><div class="label">180</div>
 
-                <!-- X軸の行 -->
                 <div class="label">X</div>
                 <div class="axis-row">
                     <button class="control-btn x-btn" data-axis="x" data-value="-180">-180</button>
@@ -460,7 +388,6 @@
                     <button class="control-btn x-btn" data-axis="x" data-value="180">180</button>
                 </div>
                 
-                <!-- Y軸の行 -->
                 <div class="label">Y</div>
                 <div class="axis-row">
                     <button class="control-btn y-btn" data-axis="y" data-value="-180">-180</button>
@@ -470,7 +397,6 @@
                     <button class="control-btn y-btn" data-axis="y" data-value="180">180</button>
                 </div>
 
-                <!-- Z軸の値（ボタン） -->
                 <div class="label">Z</div>
                 <div class="axis-row">
                     <button class="control-btn z-btn" data-axis="z" data-value="-180">-180</button>
@@ -482,9 +408,8 @@
             </div>
         </div>
 
-        <!-- Zの動きと形状の表示エリア -->
         <div class="info-area">
-            <h3 data-i18n="h_z_move">プレビューの動きの名前</h3>
+            <h3 data-i18n="h_z_move">向いている面</h3>
             <div id="z-output" class="output-box">（初期化中...）</div>
             
             <h3 data-i18n="h_details">カードの詳細</h3>
@@ -493,7 +418,6 @@
             <h3 data-i18n="h_preview">プレビュー</h3>
             <div id="preview-box" class="preview-box">
                 <div id="shape-visual" class="card-shape">
-                    <!-- 直方体にするための6面を定義 -->
                     <div class="card-face front" data-face="front">表</div>
                     <div class="card-face back" data-face="back">裏</div>
                     <div class="card-face right" data-face="right">右</div>
@@ -505,7 +429,6 @@
         </div>
     </div>
 
-    <!-- フッターの追加 -->
     <footer>
         <div class="footer-content">
             <div class="footer-section" style="flex: 0 0 300px; border-right: 1px solid #eee; padding-right: 30px;">
@@ -513,43 +436,17 @@
                 <div class="profile-info">
                     <div class="profile-name" data-i18n="profile_name">天倉りぃ</div>
                     <div class="profile-links">
-                        <a href="https://x.com/amakura_rili" target="_blank" rel="noopener noreferrer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
-                            </svg>
-                            X (Twitter)
-                        </a>
-                        <a href="https://www.youtube.com/@amakura_rili" target="_blank" rel="noopener noreferrer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z"/>
-                            </svg>
-                            YouTube
-                        </a>
+                        <a href="https://x.com/amakura_rili" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
+                        <a href="https://www.youtube.com/@amakura_rili" target="_blank" rel="noopener noreferrer">YouTube</a>
                     </div>
                 </div>
             </div>
-
             <div class="footer-section">
                 <h4 data-i18n="footer_ads">BOOTHで販売中</h4>
                 <ul class="ad-list">
-                    <li>
-                        <a href="https://amakura-graphic.booth.pm/items/7228457" target="_blank" rel="noopener noreferrer">
-                            <span class="ad-title">【Live2D】3D回転表現の適用を使った360度立方体の作り方</span>
-                            <span class="ad-url">https://amakura-graphic.booth.pm/items/7228457</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://amakura-graphic.booth.pm/items/5504457" target="_blank" rel="noopener noreferrer">
-                            <span class="ad-title">【プロジェクトデータ】Live2D色替え / Example_ColorPalette</span>
-                            <span class="ad-url">https://amakura-graphic.booth.pm/items/5504457</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://amakura-graphic.booth.pm/items/6607512" target="_blank" rel="noopener noreferrer">
-                            <span class="ad-title">彩ノ凪 2nd Album『プラネテス』</span>
-                            <span class="ad-url">https://amakura-graphic.booth.pm/items/6607512</span>
-                        </a>
-                    </li>
+                    <li><a href="https://amakura-graphic.booth.pm/items/7228457" target="_blank">【Live2D】3D回転表現の適用を使った360度立方体の作り方</a></li>
+                    <li><a href="https://amakura-graphic.booth.pm/items/5504457" target="_blank">【プロジェクトデータ】Live2D色替え / Example_ColorPalette</a></li>
+                    <li><a href="https://amakura-graphic.booth.pm/items/6607512" target="_blank">彩ノ凪 2nd Album『プラネテス』</a></li>
                 </ul>
             </div>
         </div>
@@ -557,221 +454,219 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const xButtons = document.querySelectorAll('.x-btn');
-            const yButtons = document.querySelectorAll('.y-btn');
-            const zButtons = document.querySelectorAll('.z-btn');
             const zOutput = document.getElementById('z-output');
             const shapeOutput = document.getElementById('shape-output');
             const shapeVisual = document.getElementById('shape-visual');
             const langToggle = document.getElementById('lang-toggle');
-            
-            // テキスト要素の取得
             const i18nElements = document.querySelectorAll('[data-i18n]');
             const cardFaces = document.querySelectorAll('.card-face');
 
-            let selectedX = "0"; 
-            let selectedY = "0"; 
-            let selectedZ = "0"; 
-            
-            // 回転アニメーション用の現在角度
-            let currentRotX = 0; 
-            let currentRotY = 0; 
-            let currentRotZ = 0; 
-
-            // 言語設定 (デフォルト: jp)
+            let selectedX = "0", selectedY = "0", selectedZ = "0";
+            let currentRotX = 0, currentRotY = 0, currentRotZ = 0;
             let currentLang = 'ja';
 
-            // --- 翻訳データ ---
             const TRANSLATIONS = {
                 ja: {
                     title: "3軸を１つのデフォーマで表現する場合",
                     desc: "X軸、Y軸、Z軸のシームレスループ制御。",
+                    desc_hierarchy: "回転の優先順位（階層）: 親 [X:Yaw] > 子 [Y:Pitch] > 孫 [Z:Yaw Offset]",
                     label_axis: "軸",
-                    h_z_move: "プレビューの動きの名前",
+                    h_z_move: "向いている面",
                     h_details: "カードの詳細",
                     h_preview: "プレビュー",
                     footer_profile: "プロフィール",
                     footer_ads: "BOOTHで販売中",
                     profile_name: "天倉りぃ",
+                    face_front: "表", face_back: "裏", face_right: "右", face_left: "左", face_top: "上", face_bottom: "下",
+                    msg_facing: "向いている方向: ", msg_bottom_pos: "底面の位置: ",
                     // Faces
-                    face_front: "表",
-                    face_back: "裏",
-                    face_right: "右",
-                    face_left: "左",
-                    face_top: "上",
-                    face_bottom: "下",
-                    // Dynamic JS Texts
-                    msg_data_undefined: "データ未定義",
-                    msg_key_missing: "対応するデータがありません。Key: ",
-                    msg_z_determined: "(Z={{z}}が決定)",
-                    msg_z_independent: "(Z不問)"
+                    label_front: "表 / Front", label_back: "裏 / Back", 
+                    label_right: "右側面 / Right", label_left: "左側面 / Left",
+                    label_top: "上側面 / Top", label_bottom: "下側面 / Bottom",
+                    // Bottom positions
+                    bottom_down: "画面の下方向", bottom_up: "画面の上方向 (逆さま)",
+                    bottom_front: "画面の手前方向", bottom_back: "画面の奥方向",
+                    bottom_right: "画面の右方向", bottom_left: "画面の左方向"
                 },
                 en: {
                     title: "Representing 3 Axes with 1 Deformer",
                     desc: "Seamless loop control of X, Y, and Z axes.",
+                    desc_hierarchy: "Rotation Priority (Hierarchy): Parent [X:Yaw] > Child [Y:Pitch] > Grandchild [Z:Yaw Offset]",
                     label_axis: "Axis",
-                    h_z_move: "Preview Movement Name",
+                    h_z_move: "Facing Surface",
                     h_details: "Card Details",
                     h_preview: "Preview",
                     footer_profile: "Profile",
                     footer_ads: "Available on BOOTH",
                     profile_name: "Amakura Rili",
+                    face_front: "Front", face_back: "Back", face_right: "Right", face_left: "Left", face_top: "Top", face_bottom: "Bottom",
+                    msg_facing: "Facing: ", msg_bottom_pos: "Bottom Position: ",
                     // Faces
-                    face_front: "Front",
-                    face_back: "Back",
-                    face_right: "Right",
-                    face_left: "Left",
-                    face_top: "Top",
-                    face_bottom: "Bottom",
-                    // Dynamic JS Texts
-                    msg_data_undefined: "Data undefined",
-                    msg_key_missing: "No data found for Key: ",
-                    msg_z_determined: "(Determined by Z={{z}})",
-                    msg_z_independent: "(Independent of Z)"
+                    label_front: "Front", label_back: "Back",
+                    label_right: "Right Side", label_left: "Left Side",
+                    label_top: "Top Side", label_bottom: "Bottom Side",
+                    // Bottom positions
+                    bottom_down: "Down", bottom_up: "Up (Upside down)",
+                    bottom_front: "Front (Facing viewer)", bottom_back: "Back (Facing away)",
+                    bottom_right: "Right", bottom_left: "Left"
                 }
             };
 
-            // Zの状態に対応する表示内容のマップ (多言語対応)
-            const Z_MAP = {
-                "+": { 
-                    ja: { z_content: "表 / Front", shape_content: "カードが正面を向いています。" },
-                    en: { z_content: "Front", shape_content: "The card is facing front." }
-                },
-                "0X": { 
-                    ja: { z_content: "側面 / Side", shape_content: "カードが真横を向いています。(側面、X軸の影響が大きい)" },
-                    en: { z_content: "Side", shape_content: "The card is facing sideways. (Side, X-axis dominant)" }
-                },
-                "0Y": { 
-                    ja: { z_content: "側面 / Side", shape_content: "カードが真横を向いています。(側面、Y軸の影響が大きい)" },
-                    en: { z_content: "Side", shape_content: "The card is facing sideways. (Side, Y-axis dominant)" }
-                },
-                "-": { 
-                    ja: { z_content: "裏 / Back", shape_content: "カードが裏面を向いています。" },
-                    en: { z_content: "Back", shape_content: "The card is facing the back." }
-                }
-            };
+            // Vector math helpers
+            function degreesToRadians(deg) { return deg * Math.PI / 180; }
 
-            const Z_VALS = ["-180", "-90", "0", "90", "180"];
-            
-            let contentMap = {};
-
-            // --- 1. ルックアップテーブルの定義 ---
-            // Z_MAPの構造が変わったが、参照キーは変わらない
-            
-            // X=0, Y=0
-            contentMap["0,0,0"] = Z_MAP["+"]; 
-            contentMap["0,0,90"] = Z_MAP["0X"];
-            contentMap["0,0,180"] = Z_MAP["-"];
-            contentMap["0,0,-180"] = Z_MAP["-"];
-            contentMap["0,0,-90"] = Z_MAP["+"]; 
-
-            // X=90, Y=0
-            contentMap["90,0,0"] = Z_MAP["0X"];
-            contentMap["90,0,90"] = Z_MAP["-"]; 
-            contentMap["90,0,180"] = Z_MAP["-"];
-            contentMap["90,0,-90"] = Z_MAP["0X"];
-            contentMap["90,0,-180"] = Z_MAP["+"];
-
-            // X=0, Y=90
-            contentMap["0,90,0"] = Z_MAP["0Y"];
-            contentMap["0,90,90"] = Z_MAP["+"]; 
-            contentMap["0,90,180"] = Z_MAP["-"];
-            contentMap["0,90,-90"] = Z_MAP["-"];
-            contentMap["0,90,-180"] = Z_MAP["+"];
-
-            // その他の組み合わせ
-            const originalData = {
-                "-180,180": "+", "-90,180": "0Y", "0,180": "-", "90,180": "0Y", "180,180": "+",
-                "-180,90": "+", "-90,90": "0X", "90,90": "-", "180,90": "-", 
-                "-180,0": "+", "-90,0": "0X", "180,0": "+",  // 修正箇所: "-90,0"を "0X" (側面) に変更
-                "-180,-90": "-", "-90,-90": "0X", "0,-90": "+", "90,-90": "0X", "180,-90": "-",
-                "-180,-180": "-", "-90,-180": "+", "0,-180": "+", "90,-180": "-", "180,-180": "+"
-            };
-
-            for (const key in originalData) {
-                const [x, y] = key.split(',');
-                if ((x === "0" && y === "0") || (x === "90" && y === "0") || (x === "0" && y === "90")) continue;
-                const symbol = originalData[key];
-                for (const z of Z_VALS) {
-                    contentMap[`${x},${y},${z}`] = Z_MAP[symbol];
-                }
+            // Apply Y rotation (Yaw)
+            function rotateY(v, angle) {
+                const rad = degreesToRadians(angle);
+                const c = Math.cos(rad), s = Math.sin(rad);
+                // CSS rotateY: +angle moves +Z to +X. 
+                // x' = x*c + z*s
+                // z' = -x*s + z*c
+                return {
+                    x: v.x * c + v.z * s,
+                    y: v.y,
+                    z: -v.x * s + v.z * c
+                };
             }
 
-            // 言語切り替え機能
+            // Apply X rotation (Pitch)
+            function rotateX(v, angle) {
+                const rad = degreesToRadians(angle);
+                const c = Math.cos(rad), s = Math.sin(rad);
+                // CSS rotateX: +angle moves +Y to +Z.
+                // y' = y*c - z*s
+                // z' = y*s + z*c
+                return {
+                    x: v.x,
+                    y: v.y * c - v.z * s,
+                    z: v.y * s + v.z * c
+                };
+            }
+
+            function calculateState(x, y, z) {
+                // Define normals for each face in local space
+                const normals = {
+                    'front': { x:0, y:0, z:1 },
+                    'back':  { x:0, y:0, z:-1 },
+                    'right': { x:1, y:0, z:0 },
+                    'left':  { x:-1, y:0, z:0 },
+                    'top':   { x:0, y:-1, z:0 },
+                    'bottom':{ x:0, y:1, z:0 }
+                };
+
+                // Define Bottom vector in local space (points to local +Y)
+                let bottomVec = { x:0, y:1, z:0 };
+
+                // Apply rotations: Parent(X) -> Child(Y) -> Grandchild(Z)
+                // Note: Variable names in code map to:
+                // x (input) -> Parent Yaw (rotateY)
+                // y (input) -> Child Pitch (rotateX)
+                // z (input) -> Grandchild Yaw (rotateY)
+                
+                // To calculate resulting global vectors, we apply transforms in order.
+                
+                // Helper to transform a vector
+                const transform = (v) => {
+                    // 1. Grandchild (Z input, local rotateY)
+                    // In code structure: rotateY(Z) is innermost if we think hierarchy.
+                    // Actually, `rotateY(currentRotY) rotateX(currentRotX) rotateY(currentRotZ)`
+                    // Matrix multiplication order depends on row/column vector convention.
+                    // CSS applies transforms from left to right on the coordinate system?
+                    // Or right to left on the object vertices?
+                    // CSS: transform: A B C means A(B(C(v))).
+                    // So Grandchild (Z) is applied first to the object.
+                    
+                    let v1 = rotateY(v, z);
+                    let v2 = rotateX(v1, y);
+                    let v3 = rotateY(v2, x);
+                    return v3;
+                };
+
+                let maxZ = -Infinity;
+                let facingFace = 'front';
+
+                for (const [face, normal] of Object.entries(normals)) {
+                    const transformedNormal = transform(normal);
+                    if (transformedNormal.z > maxZ) {
+                        maxZ = transformedNormal.z;
+                        facingFace = face;
+                    }
+                }
+
+                const transformedBottom = transform(bottomVec);
+
+                return { facingFace, transformedBottom };
+            }
+
+            function updateDisplay() {
+                const t = TRANSLATIONS[currentLang];
+                
+                // Parse inputs
+                const valX = parseInt(selectedX);
+                const valY = parseInt(selectedY);
+                const valZ = parseInt(selectedZ);
+
+                // 1. Calculate Rotation for CSS (Smooth Loop)
+                // Parent X (Yaw)
+                const targetRotY = valX;
+                const offsetY = Math.round((currentRotY - targetRotY) / 360) * 360;
+                currentRotY = targetRotY + offsetY;
+                
+                // Child Y (Pitch)
+                const targetRotX = valY; 
+                const offsetX = Math.round((currentRotX - targetRotX) / 360) * 360;
+                currentRotX = targetRotX + offsetX;
+                
+                // Grandchild Z (Yaw)
+                const targetRotZ = valZ;
+                const offsetZ = Math.round((currentRotZ - targetRotZ) / 360) * 360;
+                currentRotZ = targetRotZ + offsetZ;
+
+                // Apply CSS
+                shapeVisual.style.transform = `rotateY(${currentRotY}deg) rotateX(${currentRotX}deg) rotateY(${currentRotZ}deg)`;
+
+                // 2. Calculate Logical State (Facing Face & Bottom)
+                const state = calculateState(valX, valY, valZ);
+                
+                // Map face to label
+                let labelKey = 'label_' + state.facingFace;
+                zOutput.textContent = t[labelKey];
+
+                // Determine Bottom Position description
+                const b = state.transformedBottom;
+                let bottomDesc = "";
+                
+                // Check projection on screen (X, Y). Z is depth.
+                // CSS +Y is down.
+                // We check dominant component.
+                if (Math.abs(b.y) > Math.abs(b.x) && Math.abs(b.y) > Math.abs(b.z)) {
+                    bottomDesc = (b.y > 0) ? t.bottom_down : t.bottom_up;
+                } else if (Math.abs(b.x) > Math.abs(b.y) && Math.abs(b.x) > Math.abs(b.z)) {
+                    bottomDesc = (b.x > 0) ? t.bottom_right : t.bottom_left;
+                } else {
+                    // Z dominant - bottom is pointing front or back
+                    bottomDesc = (b.z > 0) ? t.bottom_front : t.bottom_back;
+                }
+
+                let detailHTML = `${t.msg_facing}${t[labelKey]}<br>${t.msg_bottom_pos}${bottomDesc}`;
+                detailHTML += `<br><span style="font-size:0.8em; color:#adb5bd;">[Rotate: Y(Parent)=${currentRotY}°, X(Child)=${currentRotX}°, Y(Grandchild/Z)=${currentRotZ}°]</span>`;
+                
+                shapeOutput.innerHTML = detailHTML;
+            }
+
             function updateLanguage() {
                 const t = TRANSLATIONS[currentLang];
-
-                // data-i18n属性を持つ要素のテキスト更新
                 i18nElements.forEach(el => {
                     const key = el.getAttribute('data-i18n');
                     if (t[key]) el.textContent = t[key];
                 });
-
-                // カードの面のテキスト更新
                 cardFaces.forEach(el => {
                     const face = el.getAttribute('data-face');
-                    if (face && t[`face_${face}`]) {
-                        el.textContent = t[`face_${face}`];
-                    }
+                    if (face && t[`face_${face}`]) el.textContent = t[`face_${face}`];
                 });
-
-                // 現在の表示も更新（動的テキストのリフレッシュ）
                 updateDisplay();
             }
 
-            // Zと形状の表示を更新する関数
-            function updateDisplay() {
-                const key = `${selectedX},${selectedY},${selectedZ}`;
-                const contentObj = contentMap[key];
-                const t = TRANSLATIONS[currentLang]; // 現在の言語リソース
-
-                // 回転計算
-                const newX = parseInt(selectedX); 
-                const newY = parseInt(selectedY); 
-                const newZ = parseInt(selectedZ); 
-
-                const targetRotY = newX;
-                const offsetY = Math.round((currentRotY - targetRotY) / 360) * 360;
-                currentRotY = targetRotY + offsetY;
-                
-                const targetRotX = newY;
-                const offsetX = Math.round((currentRotX - targetRotX) / 360) * 360;
-                currentRotX = targetRotX + offsetX;
-                
-                const targetRotZ = newZ;
-                const offsetZ = Math.round((currentRotZ - targetRotZ) / 360) * 360;
-                currentRotZ = targetRotZ + offsetZ;
-
-                const finalRotY = currentRotY + currentRotZ; 
-                
-                shapeVisual.style.transform = `rotateX(${currentRotX}deg) rotateY(${finalRotY}deg)`;
-
-                if (!contentObj) {
-                     zOutput.textContent = t.msg_data_undefined;
-                     shapeOutput.textContent = t.msg_key_missing + key;
-                     return;
-                }
-
-                // 言語に応じたコンテンツを取得
-                const content = contentObj[currentLang];
-
-                zOutput.textContent = content.z_content;
-                
-                let detailText = content.shape_content;
-                
-                if ((selectedX === "0" && selectedY === "0") || 
-                    (selectedX === "90" && selectedY === "0") || 
-                    (selectedX === "0" && selectedY === "90")) {
-                      detailText += " " + t.msg_z_determined.replace('{{z}}', selectedZ);
-                } else {
-                      detailText += " " + t.msg_z_independent;
-                }
-
-                detailText += ` [CSS Rotate: X(Tilt)=${currentRotX}°, Y(Pan)=${finalRotY}°]`;
-                shapeOutput.textContent = detailText;
-            }
-
-            // スイッチのイベントリスナー
             langToggle.addEventListener('change', (e) => {
                 currentLang = e.target.checked ? 'en' : 'ja';
                 updateLanguage();
@@ -782,22 +677,20 @@
                     button.addEventListener('click', () => {
                         buttons.forEach(btn => btn.classList.remove('selected'));
                         button.classList.add('selected');
-                        
                         const value = button.dataset.value;
                         if (axis === 'x') selectedX = value;
                         else if (axis === 'y') selectedY = value;
                         else if (axis === 'z') selectedZ = value;
-                        
                         updateDisplay();
                     });
                 });
             }
 
-            setupButtonListeners(xButtons, 'x');
-            setupButtonListeners(yButtons, 'y');
-            setupButtonListeners(zButtons, 'z');
+            setupButtonListeners(document.querySelectorAll('.x-btn'), 'x');
+            setupButtonListeners(document.querySelectorAll('.y-btn'), 'y');
+            setupButtonListeners(document.querySelectorAll('.z-btn'), 'z');
             
-            // 初期化
+            // Init
             document.querySelector('.z-btn[data-value="0"]').click();
             document.querySelector('.y-btn[data-value="0"]').click();
             document.querySelector('.x-btn[data-value="0"]').click();
