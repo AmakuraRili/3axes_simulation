@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3軸Z軸の切り替え操作盤 (ジンバル/ループ)</title>
+    <style>
+        /* グローバル設定とレイアウト */
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 400px; /* コントロールエリアと情報エリア */
+            max-width: 1200px;
+            width: 95%;
+            gap: 30px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 800px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .controls-grid {
+                grid-template-columns: 50px repeat(5, 1fr);
+            }
+            .info-area {
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+            }
+        }
+
+        /* --- コントロールグリッドのスタイル --- */
+        .controls-grid-container {
+            padding-right: 15px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 50px repeat(5, 1fr); 
+            gap: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .label {
+            font-weight: 600;
+            text-align: center;
+            padding: 10px 5px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* ヘッダー行の調整 */
+        .label:nth-child(1), .label:nth-child(2), .label:nth-child(3) {
+             /* grid-column指定はHTML構造に依存するため、汎用的に修正 */
+        }
+        
+        .axis-row {
+            display: contents; /* グリッド内で子要素を行として扱う */
+        }
+
+        .control-btn {
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: 1px solid #adb5bd;
+            border-radius: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+            background-color: white;
+        }
+
+        .control-btn:hover:not(.selected) {
+            background-color: #e2e6ea;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .control-btn.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* --- 情報表示エリアのスタイル --- */
+        .info-area h3 {
+            margin-top: 0;
+            padding-bottom: 5px;
+            color: #343a40;
+            font-size: 1.3em;
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 15px;
+        }
+
+        .output-box {
+            min-height: 60px;
+            border: 1px solid #ced4da;
+            border-left: 5px solid #343a40;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 25px;
+            background-color: #fdfdfe;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .preview-box {
+            min-height: 250px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            background-color: #e6f7ff; /* 明るいプレビュー背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px; /* 3D効果のために必須 */
+            overflow: hidden;
+        }
+
+        /* 形状表示用の特別なCSS (カード表現) */
+        .card-shape {
+            width: 140px;
+            height: 200px;
+            /* border: 5px solid #343a40; ボーダーは疑似要素に任せるか、残すなら背景透明に */
+            border-radius: 12px;
+            background-color: transparent; /* 修正: 白背景を削除して透過に */
+            
+            /* ジンバル風の動的な回転 */
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); /* イージングを少しリッチに */
+            transform-style: preserve-3d; /* 3D回転のために必要 */
+            position: relative;
+            transform: rotateX(0deg) rotateY(0deg); 
+        }
+
+        /* カードの共通スタイル */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            backface-visibility: hidden; /* 裏面が透けないように */
+            border: 4px solid #343a40;
+            box-sizing: border-box;
+            font-size: 2em;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* カードの表面 */
+        .card-face.front {
+            content: '表';
+            background-color: #4CAF50; /* 緑色 */
+            transform: rotateY(0deg);
+        }
+
+        /* カードの裏面 */
+        .card-face.back {
+            content: '裏';
+            background-color: #FF5722; /* 赤色 */
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="controls-grid-container">
+            <h2>3軸Z軸の切り替え操作盤</h2>
+            <p style="font-size:0.9em; color:#6c757d;">X軸(Yaw/横回転)、Y軸(Pitch/縦回転)、Z軸(Yawオフセット)のシームレスループ制御。</p>
+
+            <!-- X軸、Y軸、Z軸のボタン/表示グリッド -->
+            <div class="controls-grid">
+                
+                <!-- ヘッダーラベル -->
+                <div class="label">軸</div>
+                <div class="label">-180</div>
+                <div class="label">-90</div>
+                <div class="label">0</div>
+                <div class="label">90</div>
+                <div class="label">180</div>
+
+                <!-- X軸の行 -->
+                <div class="label">X</div>
+                <div class="axis-row">
+                    <button class="control-btn x-btn" data-axis="x" data-value="-180">-180</button>
+                    <button class="control-btn x-btn" data-axis="x" data-value="-90">-90</button>
+                    <button class="control-btn x-btn" data-axis="x" data-value="0">0</button>
+                    <button class="control-btn x-btn" data-axis="x" data-value="90">90</button>
+                    <button class="control-btn x-btn" data-axis="x" data-value="180">180</button>
+                </div>
+                
+                <!-- Y軸の行 -->
+                <div class="label">Y</div>
+                <div class="axis-row">
+                    <button class="control-btn y-btn" data-axis="y" data-value="-180">-180</button>
+                    <button class="control-btn y-btn" data-axis="y" data-value="-90">-90</button>
+                    <button class="control-btn y-btn" data-axis="y" data-value="0">0</button>
+                    <button class="control-btn y-btn" data-axis="y" data-value="90">90</button>
+                    <button class="control-btn y-btn" data-axis="y" data-value="180">180</button>
+                </div>
+
+                <!-- Z軸の値（ボタン） -->
+                <div class="label">Z</div>
+                <div class="axis-row">
+                    <button class="control-btn z-btn" data-axis="z" data-value="-180">-180</button>
+                    <button class="control-btn z-btn" data-axis="z" data-value="-90">-90</button>
+                    <button class="control-btn z-btn" data-axis="z" data-value="0">0</button>
+                    <button class="control-btn z-btn" data-axis="z" data-value="90">90</button>
+                    <button class="control-btn z-btn" data-axis="z" data-value="180">180</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zの動きと形状の表示エリア -->
+        <div class="info-area">
+            <h3>Zの動き（ルックアップ結果）</h3>
+            <div id="z-output" class="output-box">（初期化中...）</div>
+            
+            <h3>カードの詳細</h3>
+            <div id="shape-output" class="output-box">（初期化中...）</div>
+            
+            <h3>ジンバルプレビュー</h3>
+            <div id="preview-box" class="preview-box">
+                <div id="shape-visual" class="card-shape">
+                    <!-- 疑似要素の代わりに明示的な要素を使用（z-index管理がしやすいため） -->
+                    <div class="card-face front">表</div>
+                    <div class="card-face back">裏</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const xButtons = document.querySelectorAll('.x-btn');
+            const yButtons = document.querySelectorAll('.y-btn');
+            const zButtons = document.querySelectorAll('.z-btn');
+            const zOutput = document.getElementById('z-output');
+            const shapeOutput = document.getElementById('shape-output');
+            const shapeVisual = document.getElementById('shape-visual');
+
+            let selectedX = "0"; 
+            let selectedY = "0"; 
+            let selectedZ = "0"; 
+            
+            // 回転アニメーション用の現在角度を保持する変数 (360度ループのために必要)
+            // currentRotX: CSS上のrotateX (UI上のYボタン/縦フリップに対応)
+            // currentRotY: CSS上のrotateY (UI上のXボタン+Zオフセット/横フリップに対応)
+            let currentRotX = 0; 
+            let currentRotY = 0; 
+            let currentRotZ = 0; 
+
+
+            // Zの状態に対応する表示内容のマップ
+            const Z_MAP = {
+                "+": { z_content: "表 / Front", shape_content: "カードが正面を向いています。" },
+                "0X": { z_content: "中 / None", shape_content: "カードが真横を向いています。(側面、X軸の影響が大きい)" },
+                "0Y": { z_content: "中 / None", shape_content: "カードが真横を向いています。(側面、Y軸の影響が大きい)" },
+                "-": { z_content: "裏 / Back", shape_content: "カードが裏面を向いています。" }
+            };
+
+            const Z_VALS = ["-180", "-90", "0", "90", "180"];
+            
+            let contentMap = {};
+
+            // --- 1. ルックアップテーブルの定義 ---
+            
+            // X=0, Y=0
+            contentMap["0,0,0"] = Z_MAP["+"]; 
+            contentMap["0,0,90"] = Z_MAP["0X"];
+            contentMap["0,0,180"] = Z_MAP["-"];
+            contentMap["0,0,-180"] = Z_MAP["-"];
+            contentMap["0,0,-90"] = Z_MAP["+"]; 
+
+            // X=90, Y=0
+            contentMap["90,0,0"] = Z_MAP["0X"];
+            contentMap["90,0,90"] = Z_MAP["-"]; // ユーザー指定ケース
+            contentMap["90,0,180"] = Z_MAP["-"];
+            contentMap["90,0,-90"] = Z_MAP["0X"];
+            contentMap["90,0,-180"] = Z_MAP["+"];
+
+            // X=0, Y=90
+            contentMap["0,90,0"] = Z_MAP["0Y"];
+            contentMap["0,90,90"] = Z_MAP["+"]; 
+            contentMap["0,90,180"] = Z_MAP["-"];
+            contentMap["0,90,-90"] = Z_MAP["-"];
+            contentMap["0,90,-180"] = Z_MAP["+"];
+
+
+            // その他の組み合わせの定義 (All other 24 combinations)
+            const originalData = {
+                "-180,180": "+", "-90,180": "0Y", "0,180": "-", "90,180": "0Y", "180,180": "+",
+                "-180,90": "+", "-90,90": "0X", "90,90": "-", "180,90": "-", 
+                "-180,0": "+", "-90,0": "-", "180,0": "+", 
+                "-180,-90": "-", "-90,-90": "0X", "0,-90": "+", "90,-90": "0X", "180,-90": "-",
+                "-180,-180": "-", "-90,-180": "+", "0,-180": "+", "90,-180": "-", "180,-180": "+"
+            };
+
+            for (const key in originalData) {
+                const [x, y] = key.split(',');
+                
+                // 手動定義済みのケースはスキップ
+                if (
+                    (x === "0" && y === "0") || 
+                    (x === "90" && y === "0") || 
+                    (x === "0" && y === "90")
+                ) continue;
+
+                const symbol = originalData[key];
+                const fixedState = Z_MAP[symbol];
+
+                for (const z of Z_VALS) {
+                    contentMap[`${x},${y},${z}`] = fixedState;
+                }
+            }
+
+
+            // Zと形状の表示を更新する関数
+            function updateDisplay() {
+                const key = `${selectedX},${selectedY},${selectedZ}`;
+                const content = contentMap[key];
+
+                // 1. ジンバル風の動的回転の計算
+                const newX = parseInt(selectedX); // UI上のXボタン (横回転ターゲット)
+                const newY = parseInt(selectedY); // UI上のYボタン (縦回転ターゲット)
+                const newZ = parseInt(selectedZ); // UI上のZボタン (オフセットターゲット)
+
+                // --- 軸ごとのシームレスループ処理 ---
+
+                // CSSの rotateY (横回転) は、UIの Xボタン で制御
+                const targetRotY = newX;
+                const offsetY = Math.round((currentRotY - targetRotY) / 360) * 360;
+                currentRotY = targetRotY + offsetY;
+                
+                // CSSの rotateX (縦回転) は、UIの Yボタン で制御
+                const targetRotX = newY;
+                const offsetX = Math.round((currentRotX - targetRotX) / 360) * 360;
+                currentRotX = targetRotX + offsetX;
+                
+                // Zオフセット (横回転に加算)
+                const targetRotZ = newZ;
+                const offsetZ = Math.round((currentRotZ - targetRotZ) / 360) * 360;
+                currentRotZ = targetRotZ + offsetZ;
+
+                // 2. 最終的な回転角度の決定
+                // 仕様通り：Z軸はX軸（横回転/rotateY）にオフセットを加える
+                const finalRotY = currentRotY + currentRotZ; 
+                
+                // 3. Transform適用
+                shapeVisual.style.transform = `rotateX(${currentRotX}deg) rotateY(${finalRotY}deg)`;
+
+                // 4. 表示更新
+                if (!content) {
+                     zOutput.textContent = "データ未定義";
+                     shapeOutput.textContent = `Key: ${key} に対応するデータがありません。`;
+                     return;
+                }
+
+                zOutput.textContent = content.z_content;
+                
+                let detailText = content.shape_content;
+                
+                // 状態依存の補足テキスト
+                if ((selectedX === "0" && selectedY === "0") || 
+                    (selectedX === "90" && selectedY === "0") || 
+                    (selectedX === "0" && selectedY === "90")) {
+                      detailText += ` (Z=${selectedZ}が決定)`;
+                } else {
+                      detailText += ` (Z不問)`;
+                }
+
+                detailText += ` [CSS Rotate: X(Tilt)=${currentRotX}°, Y(Pan)=${finalRotY}°]`;
+                shapeOutput.textContent = detailText;
+                
+                // JSでの背景色変更は削除（CSSのカード裏表で色を制御するため）
+            }
+
+            function setupButtonListeners(buttons, axis) {
+                buttons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        buttons.forEach(btn => btn.classList.remove('selected'));
+                        button.classList.add('selected');
+                        
+                        const value = button.dataset.value;
+                        if (axis === 'x') selectedX = value;
+                        else if (axis === 'y') selectedY = value;
+                        else if (axis === 'z') selectedZ = value;
+                        
+                        updateDisplay();
+                    });
+                });
+            }
+
+            setupButtonListeners(xButtons, 'x');
+            setupButtonListeners(yButtons, 'y');
+            setupButtonListeners(zButtons, 'z');
+            
+            // 初期化発火
+            document.querySelector('.z-btn[data-value="0"]').click();
+            document.querySelector('.y-btn[data-value="0"]').click();
+            document.querySelector('.x-btn[data-value="0"]').click();
+        });
+    </script>
+</body>
+</html>
