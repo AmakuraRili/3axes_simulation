@@ -35,6 +35,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            padding-bottom: 0; /* ライセンス通知をページ最下部に寄せるため調整 */
             background-color: #f8f9fa;
             box-sizing: border-box;
         }
@@ -51,6 +52,7 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
             position: relative; /* 言語スイッチの配置用 */
+            margin-bottom: 15px;
         }
 
         /* 言語切り替えスイッチのスタイル */
@@ -127,13 +129,18 @@
                 padding-top: 20px;
                 border-top: 1px solid #eee;
             }
-            .footer-content {
+            /* フッター・関連プロジェクトのレスポンシブ */
+            .footer-content, .project-grid {
                 flex-direction: column;
                 gap: 30px;
             }
             .footer-section {
                 border-right: none !important;
                 padding-right: 0 !important;
+            }
+            /* Xポスト横並びを縦並びに戻す */
+            .twitter-embed, .video-wrapper {
+                flex-direction: column;
             }
         }
 
@@ -298,11 +305,86 @@
             font-size: 12px; line-height: 20px;
         }
 
+        /* ライセンス通知エリアのスタイル */
+        #license-notice {
+            display: block; /* containerのgridを上書き */
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f0f0; /* 薄いグレー */
+            border: 1px solid #ccc; /* 枠線もグレーに */
+            border-radius: 8px;
+            font-size: 0.85em;
+            color: #495057;
+            line-height: 1.2; /* 行間を狭く */
+            margin-bottom: 20px; /* ページ下部との間隔 */
+        }
+        #license-notice p {
+            margin: 2px 0; /* 段落間のマージンを狭く */
+        }
+        #license-notice strong {
+            color: #343a40;
+        }
+
+        /* --- 関連プロジェクトエリアのスタイル --- */
+        #related-projects {
+            display: block; /* containerのgridを上書き */
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 30px;
+            padding: 25px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        #related-projects h4 {
+            margin-top: 0; margin-bottom: 20px;
+            font-size: 1.3em; color: #343a40;
+            border-bottom: 2px solid #dee2e6; padding-bottom: 8px;
+            display: inline-block;
+        }
+        
+        /* 3つ横並び用のグリッドスタイル */
+        .project-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .project-item {
+            flex: 1 1 300px; /* 各アイテムの幅調整 */
+            min-width: 280px;
+            background-color: #f8f9fa; /* 視認性を上げるために背景追加 */
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        .project-item h5 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1em;
+            color: #495057;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        /* 動画スタイル */
+        .project-item video {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
         /* --- フッターのスタイル --- */
         footer {
             width: 100%;
             max-width: 1200px;
-            margin-top: 30px;
+            margin-top: 15px;
             padding: 30px;
             background-color: white;
             border-radius: 12px;
@@ -313,11 +395,24 @@
 
         .footer-content {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* 左右に配置 */
             gap: 40px;
+            width: 100%; 
         }
 
         .footer-section {
+            flex: 1;
+        }
+        
+        /* 左側（プロフィール）の幅調整 */
+        .footer-section.left {
+            flex: 0 0 40%;
+            border-right: 1px solid #eee;
+            padding-right: 30px;
+        }
+        
+        /* 右側（BOOTH）の幅調整 */
+        .footer-section.right {
             flex: 1;
         }
 
@@ -329,7 +424,8 @@
         }
 
         .profile-info {
-            display: flex; flex-direction: column; gap: 10px;
+            display: flex; flex-direction: column; 
+            gap: 5px;
         }
 
         .profile-name {
@@ -339,7 +435,8 @@
         .profile-links a {
             display: flex; align-items: center; gap: 8px;
             color: #007bff; text-decoration: none;
-            margin-bottom: 8px; transition: color 0.2s;
+            margin-bottom: 4px; 
+            transition: color 0.2s;
         }
         .profile-links a:hover { color: #0056b3; text-decoration: underline; }
 
@@ -428,10 +525,42 @@
             </div>
         </div>
     </div>
+    
+    <!-- 関連プロジェクトエリア (3つ横並び) -->
+    <section id="related-projects" class="container">
+        <h4 data-i18n="footer_ads_title">関連プロジェクト</h4>
+        
+        <div class="project-grid">
+            <!-- Item 1: X Post -->
+            <div class="project-item">
+                <h5>X (Twitter)</h5>
+                <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">Live2Dで物理演算を使った髪の揺れ表現についてのメモ。物理演算を複数のパーツに適用する際に、それぞれのパーツの優先度と重なり方を調整することで、より自然な動きに見せることができる。特に前髪とサイドの髪の重なりがポイント。</p>&mdash; 天倉りぃ🌙 (@amakura_rili) <a href="https://twitter.com/amakura_rili/status/1949002657991209418?ref_src=twsrc%5Etfw">September 20, 2025</a></blockquote>
+            </div>
 
+            <!-- Item 2: Video 1 -->
+            <div class="project-item">
+                <h5>関連動画 1</h5>
+                <video controls autoplay loop muted playsinline>
+                    <source src="https://github.com/AmakuraRili/3axes_simulation/raw/958c5e367112ab49af5efc01d0eade1174097e7c/2025-09-15%2005-11-30.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <!-- Item 3: Video 2 -->
+            <div class="project-item">
+                <h5>関連動画 2</h5>
+                <video controls autoplay loop muted playsinline>
+                    <source src="https://github.com/AmakuraRili/3axes_simulation/raw/7d8abc29f8234745185051bb8f16bc531281fd0d/2025-07-26%2015-23-26.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </section>
+    
     <footer>
         <div class="footer-content">
-            <div class="footer-section" style="flex: 0 0 300px; border-right: 1px solid #eee; padding-right: 30px;">
+            <!-- 左側: プロフィール -->
+            <div class="footer-section left">
                 <h4 data-i18n="footer_profile">プロフィール</h4>
                 <div class="profile-info">
                     <div class="profile-name" data-i18n="profile_name">天倉りぃ</div>
@@ -441,7 +570,9 @@
                     </div>
                 </div>
             </div>
-            <div class="footer-section">
+            
+            <!-- 右側: BOOTHで販売中 -->
+            <div class="footer-section right">
                 <h4 data-i18n="footer_ads">BOOTHで販売中</h4>
                 <ul class="ad-list">
                     <li><a href="https://amakura-graphic.booth.pm/items/7228457" target="_blank">【Live2D】3D回転表現の適用を使った360度立方体の作り方</a></li>
@@ -451,6 +582,25 @@
             </div>
         </div>
     </footer>
+    
+    <!-- 利用制限に関する通知エリアの移動 (ページ最下部に表示) -->
+    <div id="license-notice" class="container">
+        <p>
+            ※このWEBページは、一部AIの協力を得て制作されています。
+        </p>
+        <p>
+            ※このプロジェクトは<strong data-i18n="non_commercial_license">非営利・学習利用ライセンス</strong>のもとで公開されています。
+        </p>
+        <p>
+            ※**商用利用、再配布、公開は固く禁止します。**
+        </p>
+        <p>
+            ※個人的な学習、研究、および非営利目的でのみご利用いただけます。
+        </p>
+    </div>
+    
+    <!-- X埋め込みウィジェットスクリプト -->
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -475,11 +625,14 @@
                     h_details: "カードの詳細",
                     h_preview: "プレビュー",
                     footer_profile: "プロフィール",
+                    footer_ads_title: "関連プロジェクト", 
                     footer_ads: "BOOTHで販売中",
                     profile_name: "天倉りぃ",
-                    face_front: "表", face_back: "裏", face_right: "右", face_left: "左", face_top: "上", face_bottom: "下",
-                    msg_facing: "向いている方向: ", msg_bottom_pos: "底面の位置: ",
+                    non_commercial_license: "非営利・学習利用ライセンス", 
                     // Faces
+                    face_front: "表", face_back: "裏", face_right: "右", face_left: "左", face_top: "上", face_bottom: "下",
+                    // Dynamic Labels
+                    msg_facing: "向いている方向: ", msg_bottom_pos: "底面の位置: ",
                     label_front: "表 / Front", label_back: "裏 / Back", 
                     label_right: "右側面 / Right", label_left: "左側面 / Left",
                     label_top: "上側面 / Top", label_bottom: "下側面 / Bottom",
@@ -497,11 +650,14 @@
                     h_details: "Card Details",
                     h_preview: "Preview",
                     footer_profile: "Profile",
+                    footer_ads_title: "Related Projects", 
                     footer_ads: "Available on BOOTH",
                     profile_name: "Amakura Rili",
-                    face_front: "Front", face_back: "Back", face_right: "Right", face_left: "Left", face_top: "Top", face_bottom: "Bottom",
-                    msg_facing: "Facing: ", msg_bottom_pos: "Bottom Position: ",
+                    non_commercial_license: "Non-Commercial Use and Learning License", 
                     // Faces
+                    face_front: "Front", face_back: "Back", face_right: "Right", face_left: "Left", face_top: "Top", face_bottom: "Bottom",
+                    // Dynamic Labels
+                    msg_facing: "Facing: ", msg_bottom_pos: "Bottom Position: ",
                     label_front: "Front", label_back: "Back",
                     label_right: "Right Side", label_left: "Left Side",
                     label_top: "Top Side", label_bottom: "Bottom Side",
@@ -512,71 +668,31 @@
                 }
             };
 
-            // Vector math helpers
+            // Vector math helpers (省略)
             function degreesToRadians(deg) { return deg * Math.PI / 180; }
 
-            // Apply Y rotation (Yaw)
             function rotateY(v, angle) {
                 const rad = degreesToRadians(angle);
                 const c = Math.cos(rad), s = Math.sin(rad);
-                // CSS rotateY: +angle moves +Z to +X. 
-                // x' = x*c + z*s
-                // z' = -x*s + z*c
-                return {
-                    x: v.x * c + v.z * s,
-                    y: v.y,
-                    z: -v.x * s + v.z * c
-                };
+                return { x: v.x * c + v.z * s, y: v.y, z: -v.x * s + v.z * c };
             }
 
-            // Apply X rotation (Pitch)
             function rotateX(v, angle) {
                 const rad = degreesToRadians(angle);
                 const c = Math.cos(rad), s = Math.sin(rad);
-                // CSS rotateX: +angle moves +Y to +Z.
-                // y' = y*c - z*s
-                // z' = y*s + z*c
-                return {
-                    x: v.x,
-                    y: v.y * c - v.z * s,
-                    z: v.y * s + v.z * c
-                };
+                return { x: v.x, y: v.y * c - v.z * s, z: v.y * s + v.z * c };
             }
 
             function calculateState(x, y, z) {
-                // Define normals for each face in local space
                 const normals = {
-                    'front': { x:0, y:0, z:1 },
-                    'back':  { x:0, y:0, z:-1 },
-                    'right': { x:1, y:0, z:0 },
-                    'left':  { x:-1, y:0, z:0 },
-                    'top':   { x:0, y:-1, z:0 },
-                    'bottom':{ x:0, y:1, z:0 }
+                    'front': { x:0, y:0, z:1 }, 'back':  { x:0, y:0, z:-1 },
+                    'right': { x:1, y:0, z:0 }, 'left':  { x:-1, y:0, z:0 },
+                    'top':   { x:0, y:-1, z:0 }, 'bottom':{ x:0, y:1, z:0 }
                 };
-
-                // Define Bottom vector in local space (points to local +Y)
                 let bottomVec = { x:0, y:1, z:0 };
-
-                // Apply rotations: Parent(X) -> Child(Y) -> Grandchild(Z)
-                // Note: Variable names in code map to:
-                // x (input) -> Parent Yaw (rotateY)
-                // y (input) -> Child Pitch (rotateX)
-                // z (input) -> Grandchild Yaw (rotateY)
                 
-                // To calculate resulting global vectors, we apply transforms in order.
-                
-                // Helper to transform a vector
                 const transform = (v) => {
-                    // 1. Grandchild (Z input, local rotateY)
-                    // In code structure: rotateY(Z) is innermost if we think hierarchy.
-                    // Actually, `rotateY(currentRotY) rotateX(currentRotX) rotateY(currentRotZ)`
-                    // Matrix multiplication order depends on row/column vector convention.
-                    // CSS applies transforms from left to right on the coordinate system?
-                    // Or right to left on the object vertices?
-                    // CSS: transform: A B C means A(B(C(v))).
-                    // So Grandchild (Z) is applied first to the object.
-                    
-                    let v1 = rotateY(v, z);
+                    let v1 = rotateY(v, z); 
                     let v2 = rotateX(v1, y);
                     let v3 = rotateY(v2, x);
                     return v3;
@@ -592,63 +708,55 @@
                         facingFace = face;
                     }
                 }
-
                 const transformedBottom = transform(bottomVec);
-
                 return { facingFace, transformedBottom };
             }
 
             function updateDisplay() {
                 const t = TRANSLATIONS[currentLang];
                 
-                // Parse inputs
                 const valX = parseInt(selectedX);
                 const valY = parseInt(selectedY);
                 const valZ = parseInt(selectedZ);
 
                 // 1. Calculate Rotation for CSS (Smooth Loop)
-                // Parent X (Yaw)
                 const targetRotY = valX;
                 const offsetY = Math.round((currentRotY - targetRotY) / 360) * 360;
                 currentRotY = targetRotY + offsetY;
                 
-                // Child Y (Pitch)
                 const targetRotX = valY; 
                 const offsetX = Math.round((currentRotX - targetRotX) / 360) * 360;
                 currentRotX = targetRotX + offsetX;
                 
-                // Grandchild Z (Yaw)
                 const targetRotZ = valZ;
                 const offsetZ = Math.round((currentRotZ - targetRotZ) / 360) * 360;
                 currentRotZ = targetRotZ + offsetZ;
 
-                // Apply CSS
                 shapeVisual.style.transform = `rotateY(${currentRotY}deg) rotateX(${currentRotX}deg) rotateY(${currentRotZ}deg)`;
 
                 // 2. Calculate Logical State (Facing Face & Bottom)
                 const state = calculateState(valX, valY, valZ);
                 
-                // Map face to label
-                let labelKey = 'label_' + state.facingFace;
-                zOutput.textContent = t[labelKey];
+                let facingLabelKey = 'label_' + state.facingFace;
+                let facingContent = t[facingLabelKey];
+                zOutput.textContent = facingContent;
 
                 // Determine Bottom Position description
                 const b = state.transformedBottom;
                 let bottomDesc = "";
                 
-                // Check projection on screen (X, Y). Z is depth.
-                // CSS +Y is down.
-                // We check dominant component.
-                if (Math.abs(b.y) > Math.abs(b.x) && Math.abs(b.y) > Math.abs(b.z)) {
+                const absB = { x: Math.abs(b.x), y: Math.abs(b.y), z: Math.abs(b.z) };
+                
+                if (absB.y >= absB.x && absB.y >= absB.z) {
                     bottomDesc = (b.y > 0) ? t.bottom_down : t.bottom_up;
-                } else if (Math.abs(b.x) > Math.abs(b.y) && Math.abs(b.x) > Math.abs(b.z)) {
+                } else if (absB.x > absB.y && absB.x > absB.z) {
                     bottomDesc = (b.x > 0) ? t.bottom_right : t.bottom_left;
                 } else {
-                    // Z dominant - bottom is pointing front or back
                     bottomDesc = (b.z > 0) ? t.bottom_front : t.bottom_back;
                 }
 
-                let detailHTML = `${t.msg_facing}${t[labelKey]}<br>${t.msg_bottom_pos}${bottomDesc}`;
+
+                let detailHTML = `${t.msg_facing}${facingContent}<br>${t.msg_bottom_pos}${bottomDesc}`;
                 detailHTML += `<br><span style="font-size:0.8em; color:#adb5bd;">[Rotate: Y(Parent)=${currentRotY}°, X(Child)=${currentRotX}°, Y(Grandchild/Z)=${currentRotZ}°]</span>`;
                 
                 shapeOutput.innerHTML = detailHTML;
