@@ -307,21 +307,21 @@
 
         /* ライセンス通知エリアのスタイル */
         #license-notice {
-            display: block; /* containerのgridを上書き */
+            display: block; /* グリッドではなくブロック要素として表示 */
             width: 100%;
             max-width: 1200px;
-            margin-top: 15px;
+            margin: 15px auto 20px; /* 中央揃え */
             padding: 15px;
             background-color: #f0f0f0; /* 薄いグレー */
             border: 1px solid #ccc; /* 枠線もグレーに */
             border-radius: 8px;
             font-size: 0.85em;
             color: #495057;
-            line-height: 1.2; /* 行間を狭く */
-            margin-bottom: 20px; /* ページ下部との間隔 */
+            line-height: 1.2; 
+            box-sizing: border-box;
         }
         #license-notice p {
-            margin: 2px 0; /* 段落間のマージンを狭く */
+            margin: 4px 0; /* 適度な行間 */
         }
         #license-notice strong {
             color: #343a40;
@@ -329,14 +329,15 @@
 
         /* --- 関連プロジェクトエリアのスタイル --- */
         #related-projects {
-            display: block; /* containerのgridを上書き */
+            display: block; /* グリッドではなくブロック要素として表示 */
             width: 100%;
             max-width: 1200px;
-            margin-top: 30px;
+            margin: 30px auto 0; /* 中央揃え */
             padding: 25px;
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
         }
 
         #related-projects h4 {
@@ -527,7 +528,7 @@
     </div>
     
     <!-- 関連プロジェクトエリア (3つ横並び) -->
-    <section id="related-projects" class="container">
+    <section id="related-projects">
         <h4 data-i18n="footer_ads_title">関連プロジェクト</h4>
         
         <div class="project-grid">
@@ -584,9 +585,9 @@
     </footer>
     
     <!-- 利用制限に関する通知エリアの移動 (ページ最下部に表示) -->
-    <div id="license-notice" class="container">
+    <div id="license-notice">
         <p>
-            ※このWEBページは、一部AIの協力を得て制作されています。
+            ※このWEBページは、Geminiの協力を得て制作されています。
         </p>
         <p>
             ※このプロジェクトは<strong data-i18n="non_commercial_license">非営利・学習利用ライセンス</strong>のもとで公開されています。
